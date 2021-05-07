@@ -394,7 +394,7 @@ class AADSSO {
 		// Try to find an existing user in WP where the upn or unique_name of the current Azure AD user is
 		// (depending on config) the 'login' or 'email' field in WordPress
 		//$unique_name = isset( $jwt->upn ) ? $jwt->upn : ( isset( $jwt->unique_name ) ? $jwt->unique_name : null );
-		$unique_name = isset($jwt->oid) ? str_replace('-', '_', $jwt->oid) : null;
+		$unique_name = isset($jwt->oid) ? 'OID_' . str_replace('-', '_', $jwt->oid) : null;
 		if ( null === $unique_name ) {
 			return new WP_Error(
 				'unique_name_not_found',
