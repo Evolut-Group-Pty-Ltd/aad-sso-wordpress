@@ -393,11 +393,12 @@ class AADSSO {
 
 		// Try to find an existing user in WP where the upn or unique_name of the current Azure AD user is
 		// (depending on config) the 'login' or 'email' field in WordPress
-		$unique_name = isset( $jwt->upn ) ? $jwt->upn : ( isset( $jwt->unique_name ) ? $jwt->unique_name : null );
+		//$unique_name = isset( $jwt->upn ) ? $jwt->upn : ( isset( $jwt->unique_name ) ? $jwt->unique_name : null );
+		$unique_name = isset($jwt->oid) ? str_replace('-', '_', $jwt->oid) : null;
 		if ( null === $unique_name ) {
 			return new WP_Error(
 				'unique_name_not_found',
-				__( 'ERROR: Neither \'upn\' nor \'unique_name\' claims not found in ID Token.',
+				__( 'ERROR: Object id not found in ID Token.',
 					'aad-sso-wordpress' )
 			);
 		}
@@ -443,7 +444,7 @@ class AADSSO {
 				// TODO: Is null better than a random password?
 				// TODO: Look for otherMail, or proxyAddresses before UPN for email
 				$userdata = array(
-					'user_email' => $unique_name,
+					'user_email' => $jwt->email,
 					'user_login' => $unique_name,
 					'first_name' => ! empty( $jwt->given_name ) ? $jwt->given_name : '',
 					'last_name'  => ! empty( $jwt->family_name ) ? $jwt->family_name : '',
